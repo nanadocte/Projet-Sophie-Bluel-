@@ -1,8 +1,23 @@
-async function getWorks() { 
-    const response = await fetch("http://localhost:5678/api/works"); 
-    const works = await response.json(); 
+import { selected, selectionButton, getButtons } from './filtres.js';
+
+const response = await fetch("http://localhost:5678/api/works"); 
+const works = await response.json(); 
+
+
+function main (){
+    getWorks(works)
+    getButtons(works)
+    selectionButton(works, getWorks)
+    selected()
+}
+
+
+//ajouter dynamiquement les travaux sur la page d’accueil.
+function getWorks(works) { 
     const gallery = document.querySelector(".gallery"); 
-    console.log(works)
+    
+    document.querySelector(".gallery").innerHTML= "";
+
 
     works.forEach(element => { 
         const figure = document.createElement("figure"); 
@@ -16,4 +31,20 @@ async function getWorks() {
         figure.appendChild(figcaption); 
     }); 
 } 
-getWorks()
+
+
+
+
+
+
+main()
+
+
+
+
+
+
+
+
+
+
