@@ -1,4 +1,4 @@
-import { selected, selectionButton, getButtons } from './filtres.js';
+import { selectionButton, getButtons } from './filtres.js';
 
 const response = await fetch("http://localhost:5678/api/works"); 
 const works = await response.json(); 
@@ -8,7 +8,7 @@ function main (){
     getWorks(works)
     getButtons(works)
     selectionButton(works, getWorks)
-    selected()
+   
 }
 
 
