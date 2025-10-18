@@ -8,7 +8,6 @@ function main (){
     getWorks(works)
     getButtons(works)
     selectionButton(works, getWorks)
-   
 }
 
 

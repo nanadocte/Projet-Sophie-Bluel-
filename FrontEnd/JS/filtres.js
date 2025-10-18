@@ -1,8 +1,3 @@
-// Affichage du filtre selectionné 
-
-
-
-   
 
 // Selection filtres et affichages en conséquent 
 export function selectionButton(works, getWorks) {
