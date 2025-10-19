@@ -1,5 +1,5 @@
 import { selectionButton, getButtons } from './filtres.js';
-
+import {affichageEdition, logOut} from './edition.js' ;
 const response = await fetch("http://localhost:5678/api/works"); 
 const works = await response.json(); 
 
@@ -8,11 +8,13 @@ function main (){
     getWorks(works)
     getButtons(works)
     selectionButton(works, getWorks)
+    affichageEdition()
+    logOut()
 }
 
 
 //ajouter dynamiquement les travaux sur la page d’accueil.
-function getWorks(works) { 
+export function getWorks(works) { 
     const gallery = document.querySelector(".gallery"); 
     
     document.querySelector(".gallery").innerHTML= "";
@@ -37,6 +39,7 @@ function getWorks(works) {
 
 
 main()
+
 
 
 

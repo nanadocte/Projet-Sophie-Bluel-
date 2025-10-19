@@ -26,7 +26,10 @@ button.addEventListener("click", (event)=>{
 export function getButtons (works) {
     const portfolio = document.querySelector(".portfolio-filtres")
     const liTous = document.createElement("li")
+    //liTous.classList.add("visible")
     const buttonTous = document.createElement("button")
+    buttonTous.classList.add("visible");
+    buttonTous.classList.add('public-element')
     buttonTous.innerText = "Tous"
     liTous.appendChild(buttonTous);
     portfolio.appendChild(liTous);
@@ -39,11 +42,16 @@ export function getButtons (works) {
         const newList = document.createElement("li")
         const newButton = document.createElement("button")
         newButton.innerText = category
-        
+        //newList.classList.add("visible")
+        newButton.classList.add("visible")
+        newButton.classList.add('public-element')
+
         portfolio.appendChild(newList)
         newList.appendChild(newButton)
 })
 }
+
+
 
 
 

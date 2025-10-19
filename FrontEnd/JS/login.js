@@ -35,7 +35,7 @@ const formulaire = document.querySelector(".formulaire-login")
         if (!formulaire.querySelector("p")){
         const erreur = document.createElement("p")
             erreur.textContent 
-                = "Attention, les coordonnées entrées sont incorrectes"
+                = "Erreur dans l’identifiant ou le mot de passe"
             formulaire.appendChild(erreur)}
         
     }
