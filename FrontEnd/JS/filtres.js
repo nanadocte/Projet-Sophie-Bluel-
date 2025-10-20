@@ -25,24 +25,23 @@ button.addEventListener("click", (event)=>{
 //Affichage dynamique des boutons 
 export function getButtons (works) {
     const portfolio = document.querySelector(".portfolio-filtres")
+    // bouton TOUS
     const liTous = document.createElement("li")
-    //liTous.classList.add("visible")
     const buttonTous = document.createElement("button")
     buttonTous.classList.add("visible");
     buttonTous.classList.add('public-element')
     buttonTous.innerText = "Tous"
     liTous.appendChild(buttonTous);
     portfolio.appendChild(liTous);
-
+    
+    //bouton avec categories
     const categories = works.map(work => work.category.name)
     const categoriesName = [...new Set(categories)]
-    console.log(categoriesName)
 
     categoriesName.forEach(category => {
         const newList = document.createElement("li")
         const newButton = document.createElement("button")
         newButton.innerText = category
-        //newList.classList.add("visible")
         newButton.classList.add("visible")
         newButton.classList.add('public-element')
 

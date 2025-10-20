@@ -5,7 +5,6 @@
 const formulaire = document.querySelector(".formulaire-login")
 
 // Vérification de connexion  
-
  formulaire.addEventListener("submit", async (event)=> {
 
     event.preventDefault()
@@ -26,19 +25,21 @@ const formulaire = document.querySelector(".formulaire-login")
     // Récupération de données
     const data = await response.json()
     
-    // Redirection 
+    
     if (!data.token) {
-        // Ajouter une class pour le styel 
+        // Ajouter une classe pour le style 
         const input = document.querySelectorAll(".formulaire-login input")
         input.forEach(input => input.classList.add("wrong-password"))
 
+        //Ajoute d'un paragraphe erreur 
         if (!formulaire.querySelector("p")){
-        const erreur = document.createElement("p")
+            const erreur = document.createElement("p")
             erreur.textContent 
-                = "Erreur dans l’identifiant ou le mot de passe"
+            = "Erreur dans l’identifiant ou le mot de passe"
             formulaire.appendChild(erreur)}
-        
-    }
+            
+        }
+        // Redirection 
     else window.location.href="../index.html"
     localStorage.setItem("token", data.token)
 })

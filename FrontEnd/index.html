@@ -24,10 +24,9 @@
 		<ul>
 			<li><a href="#portfolio">projets</a></li>
 			<li><a href="#contact">contact</a></li>
-			<li><a href="./html/login.html" class="visible public-element">login</a></li>
-			<li><a href="#" class="hidden logout">logout</a></li>
-
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li class="visible public-element"><a href="./html/login.html" >login</a></li>
+			<li class="hidden logout"><a href="#">logout</a></li>
+			<li><a href="#"><img src="./assets/icons/instagram.png" alt="Instagram"></a></li>
 		</ul>
 	</nav>
 </header>
@@ -47,11 +46,19 @@
 	<section id="portfolio">
 		<div class="mes-projets">
 			<h2>Mes projets</h2>
-			<div class="hidden">
-				<i class="fa-regular fa-pen-to-square" style="color: black;"></i>    
-				<p>Modifier </p> 
-			</div>	   
-		</div>	
+			<div class="hidden modifier">
+				<a href="#" class="modifier"><i class="fa-regular fa-pen-to-square" style="color: black;"></i>    
+				<p>Modifier </p></a>
+			</div>	
+		</div>
+		<aside class="modal" arria-hidden="true" role="dialog" aria-labelledby="title-modal" style="display: none">
+			<div class="modal-wrapper">
+				<p>X</p>
+				<h3 id="title-modal">Galerie photo</h3>
+				<div class="modal-img"></div>
+				<button>Ajouter une photo</button>
+			</div>
+		</aside>	
 
 		<ul class="portfolio-filtres">
 			<li>
