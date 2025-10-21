@@ -1,6 +1,6 @@
 import { selectionButton, getButtons } from './filtres.js';
 import {affichageEdition, logOut} from './edition.js' ;
-import {openModal, getWorksModal} from './modale.js'
+
 const response = await fetch("http://localhost:5678/api/works"); 
 const works = await response.json(); 
 
@@ -11,7 +11,6 @@ function main (){
     selectionButton(works, getWorks)
     affichageEdition()
     logOut()
-    openModal()
 }
 
 

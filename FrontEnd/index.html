@@ -11,6 +11,8 @@
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script type="module" src="./JS/script.js" defer></script>
+	<script type="module" src="./JS/modale.js" defer></script>
+
 
 </head>
 <body>
@@ -47,16 +49,51 @@
 		<div class="mes-projets">
 			<h2>Mes projets</h2>
 			<div class="hidden modifier">
-				<a href="#" class="modifier"><i class="fa-regular fa-pen-to-square" style="color: black;"></i>    
+				<a href="#modal1" class="js-modal hidden modifier"><i class="fa-regular fa-pen-to-square" style="color: black;"></i>    
 				<p>Modifier </p></a>
 			</div>	
 		</div>
-		<aside class="modal" arria-hidden="true" role="dialog" aria-labelledby="title-modal" style="display: none">
-			<div class="modal-wrapper">
-				<p>X</p>
+
+		<aside id="modal1" class="modal" aria-hidden="true" role="dialog" aria-labelledby="title-modal" style="display: none">
+			
+			<div class="modal-wrapper js-modal-stop modal-gallery">
+				<i class="fa-solid fa-xmark js-modal-close"></i>
 				<h3 id="title-modal">Galerie photo</h3>
 				<div class="modal-img"></div>
-				<button>Ajouter une photo</button>
+				<button class="js-modal-form" data-target="#modal2">
+					Ajouter une photo
+				</button>
+			</div>
+
+			<div style="display: none;" class="modal-wrapper js-modal-stop modal-form">
+				<nav class="form">
+				<i class="fa-solid fa-arrow-left js-modal-retour"></i>
+				<i class="fa-solid fa-xmark js-modal-close"></i>
+				</nav>
+				<h3 id="title-modal">Ajout photo</h3>
+				<form class="">
+					<div class="form-files">
+						<i class="fa-solid fa-image"></i>
+						<input
+							type="file"
+							id="fileElem"
+							multiple
+							accept="image/*"
+							class="visually-hidden">
+						<label for="fileElem">+ Ajouter photo</label>
+						<p>jpg, png : 4mo max</p>
+					</div>
+					<label for="titre">Titre</label>
+					<input type="text" name="titre" id="titre">
+
+					<label for="categorie">Catégorie</label>
+					<select name="categorie" id="categorie">
+						<img >
+					<option value=""></option>
+					</select>
+
+					<button type="submit">Valider</button>
+				</form>
 			</div>
 		</aside>	
 

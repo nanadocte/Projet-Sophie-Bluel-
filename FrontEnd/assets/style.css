@@ -257,7 +257,6 @@ footer nav {
 
 .mes-projets .modifier {
 	gap: 10px;
-	display: flex;
 	
 }
 
@@ -302,6 +301,7 @@ footer nav {
 	justify-content: center;
 	align-items: center;
 }
+
 .modal-wrapper{
 	background: white;
 	padding: 50px 20px;
@@ -325,8 +325,8 @@ footer nav {
 }
 
 
-.modal p {
-	align-self: flex-end;
+.modal nav {
+	
 }
 
 .modal button {
@@ -338,6 +338,7 @@ width: 179px;
     border-radius: 60px;
     margin: 0;
 	bottom: 0;
+	align-self: center;
 }
 
 
@@ -347,7 +348,7 @@ width: 179px;
 	width: auto;
 }
 
-h3#title-modal {
+h3#title-modal, h3#title-modal2 {
     font-size: 26px;
 }
 
@@ -360,4 +361,81 @@ h3#title-modal {
 	padding: 5px;
 	right: 0;
     cursor: pointer;
+}
+
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+input.visually-hidden:is(:focus, :focus-within) + label {
+  outline: thin dotted;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+	gap: 10px;
+}
+
+.form-files {
+    height: 169px;
+    width: 420px;
+    background: #E8F1F6;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+i.fa-solid.fa-image {
+	font-size: 66.5px;color: #B9C5CC;
+}
+
+
+
+.form-files {
+    gap: 10px;
+    /* padding: 20px; */
+}
+
+label[for="fileElem"] {
+    background: #CBD6DC;
+    border-radius: 50px;
+    color: #306685;
+    padding: 10px 33px;
+}
+
+.form-files p {
+    font-size: 10px;
+    color: #444444;
+}
+
+.modal-wrapper nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+#titre, #categorie {
+    border: none;
+    box-shadow: 0px 4px 14px 0px #00000017;
+    height: 51px;
+	width: 420px;
+    font-size: 18px;
+    font-family: 'Work Sans';
+    padding: 0;
+    color: #6C6C6C;
+}
+#categorie {
+	appearance: none;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C6C6C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+	background-repeat: no-repeat;
+	background-position: right 12px center; 
+	background-size: 12px;
 }
