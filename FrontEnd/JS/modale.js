@@ -1,12 +1,11 @@
 
-// Fonction close and open modal 
+// Fonction close and open modal gallery
 let modal = null
 
 
 const openModal = function(event){
     event.preventDefault()
     let target = document.querySelector(event.currentTarget.getAttribute("href"))
-    
             target.style.display = null
             target.removeAttribute("aria-hidden")
             target.setAttribute("aria-modal", "true")
@@ -16,7 +15,7 @@ const openModal = function(event){
                 getWorksModal(works)}
             modal = target
             modal.addEventListener("click", closeModal)
-            modal.querySelector(".js-modal-close").addEventListener("click", closeModal)
+            modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", closeModal))
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
 }
 
@@ -33,17 +32,16 @@ const closeModal = function(event){
 }
 
 
+// Open and close MODALFORM
 const openModalForm = function(e){
     document.querySelector(".modal-gallery").style.display ="none"
     document.querySelector(".modal-form").style.display = null
 }
 
+
 const retourModalGallery = function(e){
     document.querySelector(".modal-form").style.display ="none"
     document.querySelector(".modal-gallery").style.display = null
-}
-const stopPropagation = function(event){
-    event.stopPropagation()
 }
 document.querySelector(".js-modal-form").addEventListener("click", openModalForm)
 
@@ -53,29 +51,35 @@ document.querySelectorAll(".js-modal").forEach(a=> {
     a.addEventListener("click", openModal)
 })
 
+
+const stopPropagation = function(event){
+    event.stopPropagation()
+}
+
+
+
 const response = await fetch(`http://localhost:5678/api/works`)
 const works = await response.json()
-
-
-
 // Récupération des travaux sur la modale 
 
-export function getWorksModal (works){
+function getWorksModal (works){
     works.forEach(work => {
-        
         const sectionImg = document.querySelector(".modal-img")
         const workContainer = document.createElement("div")
         const img = document.createElement("img");
         const trash = document.createElement("img");
         workContainer.classList.add("workContainer")
+
         img.setAttribute("src", work.imageUrl); 
         img.setAttribute("alt", work.title);
         img.classList.add("imagesModal"); 
+
         trash.setAttribute("src", "./assets/icons/trash.svg")
-        trash.setAttribute("alt", "Delete")
+        trash.setAttribute("alt", "supprimer")
         trash.setAttribute("id", work.id)
         trash.addEventListener("click", deleteWork);
         trash.classList.add("delete")
+
         sectionImg.appendChild(workContainer)
         workContainer.appendChild(trash)
         workContainer.appendChild(img);
@@ -84,31 +88,29 @@ export function getWorksModal (works){
 
 
 // DELETE WORKS 
-
-
 const deleteWork = async function(e){
-// ETEZS VOUS SÜRES ? 
+    // Confirmation ? 
+    if (!confirm("Souhaitez vous supprimer ce travail ?")) return;
 
     // GET ID 
-    
-const id = e.target.getAttribute("id")
-const token = localStorage.getItem("token")
+    const id = e.target.getAttribute("id");
+    const token = localStorage.getItem("token");
 
     //DELETE ID
-const response = 
-    await fetch(`http://localhost:5678/api/works/${id}`, {
-            method:"DELETE",
-            headers: {"accept": "*/*",
-                        "Authorization": `Bearer ${token}`,
-            }
-})
-if (response.ok) {
-    e.target.parentElement.remove(); // supprime uniquement le work supprimé
-}
+    const response = 
+        await fetch(`http://localhost:5678/api/works/${id}`, {
+                method:"DELETE",
+                headers: {"accept": "*/*",
+                            "Authorization": `Bearer ${token}`,
+                }
+        })
+    if (response.ok) {
+        e.target.parentElement.remove(); 
+    }
 }
 
 
-// Categories pour la selection 
+// Select categories
 const responseCategories = await fetch('http://localhost:5678/api/categories')
 const categories = await responseCategories.json()
 const select = document.querySelector("select")
@@ -116,8 +118,110 @@ const select = document.querySelector("select")
 categories.forEach(c => {
     const option = document.createElement("option")
     option.innerText = c.name
+    option.value = c.id;
     select.appendChild(option)
 })
 
 
 
+// Ajout de travaux 
+
+//add event submit 
+
+const addWork = async function(e){
+    e.preventDefault()
+
+    const form = document.querySelector(".form-add-work")
+    const token = localStorage.getItem("token");
+
+    const imageFile = e.target.querySelector("[name=image]").files[0] 
+    const title = e.target.querySelector("[name=titre]").value
+    const category = e.target.querySelector("[name=categorie]").value
+
+    const formData= new FormData() 
+    formData.append("image", imageFile);
+    formData.append("title", title);
+    formData.append("category", category)
+
+    
+    try {
+        const response = await fetch(`http://localhost:5678/api/works`, {
+                        method: "POST",
+                        headers : { "accept": 'application/json', 
+                                "Authorization": `Bearer ${token}`},
+                        body: formData
+        });
+        
+    if (response.ok){
+        console.error("Envoi effectué")
+        // ADD work to gallery 
+        const newWork = await response.json()
+        const gallery = document.querySelector(".gallery")
+        const figure = document.createElement("figure")
+        const image = document.createElement("img")
+        const figcaption = document.createElement("figcaption")
+
+        image.src = newWork.imageUrl
+        image.alt = newWork.title
+        figcaption.innerText = newWork.title
+
+        gallery.appendChild(figure)
+        figure.appendChild(image)
+        figure.appendChild(figcaption)
+
+
+        //ADD work to modal
+        const imagesModal = document.querySelector(".modal-img")
+        const workContainer = document.createElement("div")
+        workContainer.classList.add("workContainer")
+        const imageModal = document.createElement("img")
+        const trash = document.createElement("img")
+
+        imageModal.src = newWork.imageUrl
+        imageModal.alt = newWork.title
+        imageModal.classList.add("imagesModal")
+        trash.alt = "supprimer"
+        trash.src = `./assets/icons/trash.svg`
+        trash.classList.add("delete")
+        trash.setAttribute("id", newWork.id)
+        trash.addEventListener("click", deleteWork);
+
+        imagesModal.appendChild(workContainer)
+        workContainer.appendChild(imageModal)
+        workContainer.appendChild(trash)
+
+
+    }
+    else {
+        console.error("Erreur");
+    }
+} catch(error){
+    console.error("Erreur réseau :", error)
+}
+}
+
+// function ajoutDB 
+const form = document.querySelector(".form-add-work")
+form.addEventListener("submit", addWork)
+
+/*
+
+const submitWorks = {
+  title: event.target.querySelector("[input]")".value,
+  imageUrl: event.target.querySelector("[input]")".value,
+  categoryId:event.target.querySelector("[input]")".value,
+}
+
+  const chargeUtile = JSON.stringify(submitWorks)
+
+fetch(`http://localhost:5678/api/works`
+        method: 'POST', 
+        headers:{"accept": 'application/json',
+  -H '           "Authorization": `Bearer ${token}`,
+  -H            "Content-Type": 'multipart/form-data',}
+        body: chargeUtile
+  -F 'image=' \
+  -F 'title=' \
+  -F 'category='
+
+  */
