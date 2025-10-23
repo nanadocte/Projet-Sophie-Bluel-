@@ -22,11 +22,13 @@ export function getWorks(works) {
 
 
     works.forEach(element => { 
+        
         const figure = document.createElement("figure"); 
         const img = document.createElement("img"); 
         const figcaption = document.createElement("figcaption"); 
         img.setAttribute("src", element.imageUrl); 
         img.setAttribute("alt", element.title); 
+        img.setAttribute("data-id", element.id)
         figcaption.innerText = element.title; 
         gallery.appendChild(figure); 
         figure.appendChild(img); 

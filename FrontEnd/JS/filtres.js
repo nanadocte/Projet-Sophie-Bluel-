@@ -9,9 +9,9 @@ button.addEventListener("click", (event)=>{
     //Add selected class 
     buttons.forEach(button => button.classList.remove("selected"))
     event.target.classList.add("selected")
+
     // Add functionality to filter 
     const categoryName = button.textContent.trim();
-    console.log(categoryName)
     const filteredWorks = categoryName === "Tous" 
         ? works 
         : works.filter(work => work.category.name === categoryName)
@@ -33,7 +33,7 @@ export function getButtons (works) {
     buttonTous.innerText = "Tous"
     liTous.appendChild(buttonTous);
     portfolio.appendChild(liTous);
-    
+
     //bouton avec categories
     const categories = works.map(work => work.category.name)
     const categoriesName = [...new Set(categories)]

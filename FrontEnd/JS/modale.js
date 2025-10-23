@@ -105,8 +105,14 @@ const deleteWork = async function(e){
                 }
         })
     if (response.ok) {
-        e.target.parentElement.remove(); 
+        e.target.parentElement.remove();
+        //Suppression gallery 
+         const galleryImg = document.querySelector(`.gallery img[data-id="${id}"]`);
+         console.log(id)
+         console.log(galleryImg)
+         if (galleryImg) galleryImg.parentElement.remove()
     }
+    console.log("travail supprimé")
 }
 
 
@@ -163,6 +169,7 @@ const addWork = async function(e){
 
         image.src = newWork.imageUrl
         image.alt = newWork.title
+        image.dataset.id = newWork.id
         figcaption.innerText = newWork.title
 
         gallery.appendChild(figure)
@@ -204,24 +211,26 @@ const addWork = async function(e){
 const form = document.querySelector(".form-add-work")
 form.addEventListener("submit", addWork)
 
-/*
+//WORK PREVIEW 
 
-const submitWorks = {
-  title: event.target.querySelector("[input]")".value,
-  imageUrl: event.target.querySelector("[input]")".value,
-  categoryId:event.target.querySelector("[input]")".value,
+
+const input = document.querySelector("form input")
+
+input.addEventListener("change", ()=> {
+    const file = input.files[0]
+if(file){
+
+const formFilesContainer = document.querySelector(".form-files")
+const formFiles = [...formFilesContainer.children];
+formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
+
+
+const imageFile = document.createElement("img")
+imageFile.src = URL.createObjectURL(file)
+imageFile.alt = "Aperçu de l'image selectionné"
+imageFile.classList.add("preview-image")
+
+
+formFilesContainer.appendChild(imageFile)
 }
-
-  const chargeUtile = JSON.stringify(submitWorks)
-
-fetch(`http://localhost:5678/api/works`
-        method: 'POST', 
-        headers:{"accept": 'application/json',
-  -H '           "Authorization": `Bearer ${token}`,
-  -H            "Content-Type": 'multipart/form-data',}
-        body: chargeUtile
-  -F 'image=' \
-  -F 'title=' \
-  -F 'category='
-
-  */
+})

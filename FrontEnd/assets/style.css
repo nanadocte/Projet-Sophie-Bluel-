@@ -326,7 +326,9 @@ footer nav {
 
 
 .modal nav {
-	
+	display: flex;
+	justify-content: space-between;
+
 }
 
 .modal button {
@@ -341,7 +343,9 @@ width: 179px;
 	align-self: center;
 }
 
-
+i.fa-solid.fa-xmark.js-modal-close {
+    align-self: flex-end;
+}
 
 .imagesModal {
 	height: 102.57px;
@@ -420,6 +424,7 @@ label[for="fileElem"] {
 .modal-wrapper nav {
     display: flex;
     justify-content: space-between;
+	width: 100%;
 }
 
 #titre, #categorie {
@@ -438,4 +443,13 @@ label[for="fileElem"] {
 	background-repeat: no-repeat;
 	background-position: right 12px center; 
 	background-size: 12px;
+}
+
+img.preview-image {
+    height: 169px;
+    width: 129px;
+}
+
+.hidden-for-preview {
+	display: none;
 }
