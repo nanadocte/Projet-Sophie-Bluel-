@@ -1,10 +1,12 @@
 
 //supprimer l'input file si ajout d'un nv fichier 
 
-
+const stopPropagation = function(event){
+        event.stopPropagation()
+    }
 // Fonction close and open modal gallery
 let modal = null
-const openModal = function(event){
+const openModal = function(event, works){
     event.preventDefault()
     let target = document.querySelector(event.currentTarget.getAttribute("href"))
             target.style.display = null
@@ -13,7 +15,7 @@ const openModal = function(event){
 
             const verificationPresence = document.querySelector(".modal-img")
             if (verificationPresence.children.length=== 0){
-                getWorksModal()
+                getWorksModal(works)
             }
             modal = target
             modal.addEventListener("click", closeModal)
@@ -35,38 +37,38 @@ const closeModal = function(event){
 
 
 // Open and close MODALFORM
-const openModalForm = function(e){
+const openModalForm = function(categories){
     document.querySelector(".modal-gallery").style.display ="none"
     document.querySelector(".modal-form").style.display = null
-    remplirSelectCategories()
+    remplirSelectCategories(categories)
 }
 
-const retourModalGallery = function(e){
+const retourModalGallery = function(){
     document.querySelector(".modal-form").style.display ="none"
     document.querySelector(".modal-gallery").style.display = null
 }
 
 
+export function gererModal(works, categories){
 
-document.querySelector(".js-modal-form").addEventListener("click", openModalForm)
-
-document.querySelector(".js-modal-retour").addEventListener("click", retourModalGallery)
-
-document.querySelectorAll(".js-modal").forEach(a=> {
-    a.addEventListener("click", openModal)
-})
-
-
-const stopPropagation = function(event){
-    event.stopPropagation()
+    document.querySelector(".js-modal-form").addEventListener("click", () => openModalForm(categories))
+    
+    document.querySelector(".js-modal-retour").addEventListener("click", retourModalGallery)
+    
+    document.querySelectorAll(".js-modal").forEach(a=> {
+        a.addEventListener("click", (event)=> openModal(event, works))
+    })
+    
 }
 
 
 
+
+
 // Récupération des travaux sur la modale 
-function getWorksModal (){
-    window.works.forEach(work => {
-        const sectionImg = document.querySelector(".modal-img")
+export function getWorksModal (works){
+    const sectionImg = document.querySelector(".modal-img")
+    works.forEach(work => {
         const workContainer = document.createElement("div")
         const img = document.createElement("img");
         const trash = document.createElement("img");
@@ -78,7 +80,7 @@ function getWorksModal (){
 
         trash.setAttribute("src", "./assets/icons/trash.svg")
         trash.setAttribute("alt", "supprimer")
-        trash.setAttribute("id", work.id)
+        trash.setAttribute("data-id", work.id)
         trash.addEventListener("click", deleteWork);
         trash.classList.add("delete")
 
@@ -95,7 +97,11 @@ const deleteWork = async function(e){
     if (!confirm("Souhaitez vous supprimer ce travail ?")) return;
     try {
     // GET ID 
-    const id = e.target.getAttribute("id");
+    const id = e.target.getAttribute("data-id");
+    if (!id) {
+        console.error("ID manquant pour la suppression du travail.");
+        return;
+    }
     const token = localStorage.getItem("token");
 
     //DELETE ID
@@ -112,8 +118,8 @@ const deleteWork = async function(e){
          const galleryImg = document.querySelector(`.gallery img[data-id="${id}"]`);
         
          if (galleryImg) galleryImg.parentElement.remove()
+            console.log("travail supprimé")
     }
-    console.log("travail supprimé")
     } catch(error) {
         console.error("Une erreur est survenue : " + error.message)
     }
@@ -122,14 +128,14 @@ const deleteWork = async function(e){
 
 // Select categories
 
-async function remplirSelectCategories(){
+export async function remplirSelectCategories(categories){
     
         const select = document.querySelector("select")
         select.innerHTML =""
         const optionVide = document.createElement("option")
         select.appendChild(optionVide)
 
-        window.categories.forEach(c => {
+        categories.forEach(c => {
             const option = document.createElement("option")
             option.innerText = c.name
             option.value = c.id;
@@ -168,7 +174,7 @@ const addWork = async function(e){
         });
         
     if (response.ok){
-        console.error("Envoi effectué")
+        console.log("Envoi effectué")
         // ADD work to gallery 
         const newWork = await response.json()
         const gallery = document.querySelector(".gallery")
@@ -199,7 +205,7 @@ const addWork = async function(e){
         trash.alt = "supprimer"
         trash.src = `./assets/icons/trash.svg`
         trash.classList.add("delete")
-        trash.setAttribute("id", newWork.id)
+        trash.setAttribute("data-id", newWork.id)
         trash.addEventListener("click", deleteWork);
 
         imagesModal.appendChild(workContainer)
@@ -213,10 +219,6 @@ const addWork = async function(e){
 }
 
 // function ajoutDB 
-const form = document.querySelector(".form-add-work")
-form.addEventListener("submit", addWork)
-
-//WORK PREVIEW 
 
 
 const workPreview = function(e){
@@ -238,6 +240,16 @@ const workPreview = function(e){
     }
 }
 
+
+export function gererAjoutModal(){
+const form = document.querySelector(".form-add-work")
+form.addEventListener("submit", addWork)
 const input = document.querySelector("form input")
 input.addEventListener("change", workPreview )
+}
+//WORK PREVIEW 
+
+
+
+
     

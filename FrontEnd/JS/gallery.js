@@ -50,7 +50,7 @@ button.addEventListener("click", (event)=>{
 
 
 //Affichage dynamique des boutons 
-export function getButtons (works) {
+export function getButtons (categories) {
     const portfolio = document.querySelector(".portfolio-filtres")
     // bouton TOUS
     const liTous = document.createElement("li")
@@ -62,10 +62,9 @@ export function getButtons (works) {
     portfolio.appendChild(liTous);
 
     //bouton avec categories
-    // const categories = works.map(work => work.category.name)
-    // const categoriesName = [...new Set(categories)]
-    const categories = window.categories.map(c => c.name)
-    const categoriesName = [...new Set(categories)]
+    
+    const categoriesButton = categories.map(c => c.name)
+    const categoriesName = [...new Set(categoriesButton)]
     categoriesName.forEach(category => {
         const newList = document.createElement("li")
         const newButton = document.createElement("button")
