@@ -1,8 +1,9 @@
 
+//supprimer l'input file si ajout d'un nv fichier 
+
+
 // Fonction close and open modal gallery
 let modal = null
-
-
 const openModal = function(event){
     event.preventDefault()
     let target = document.querySelector(event.currentTarget.getAttribute("href"))
@@ -12,7 +13,8 @@ const openModal = function(event){
 
             const verificationPresence = document.querySelector(".modal-img")
             if (verificationPresence.children.length=== 0){
-                getWorksModal(works)}
+                getWorksModal()
+            }
             modal = target
             modal.addEventListener("click", closeModal)
             modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", closeModal))
@@ -26,7 +28,7 @@ const closeModal = function(event){
             modal.setAttribute("aria-hidden", "true");
             modal.removeAttribute("aria-modal");
             modal.removeEventListener("click", closeModal);
-            modal.querySelector(".js-modal-close").removeEventListener("click", closeModal);
+            modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", closeModal));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
             modal = null
 }
@@ -36,13 +38,16 @@ const closeModal = function(event){
 const openModalForm = function(e){
     document.querySelector(".modal-gallery").style.display ="none"
     document.querySelector(".modal-form").style.display = null
+    remplirSelectCategories()
 }
-
 
 const retourModalGallery = function(e){
     document.querySelector(".modal-form").style.display ="none"
     document.querySelector(".modal-gallery").style.display = null
 }
+
+
+
 document.querySelector(".js-modal-form").addEventListener("click", openModalForm)
 
 document.querySelector(".js-modal-retour").addEventListener("click", retourModalGallery)
@@ -58,12 +63,9 @@ const stopPropagation = function(event){
 
 
 
-const response = await fetch(`http://localhost:5678/api/works`)
-const works = await response.json()
 // Récupération des travaux sur la modale 
-
-function getWorksModal (works){
-    works.forEach(work => {
+function getWorksModal (){
+    window.works.forEach(work => {
         const sectionImg = document.querySelector(".modal-img")
         const workContainer = document.createElement("div")
         const img = document.createElement("img");
@@ -91,7 +93,7 @@ function getWorksModal (works){
 const deleteWork = async function(e){
     // Confirmation ? 
     if (!confirm("Souhaitez vous supprimer ce travail ?")) return;
-
+    try {
     // GET ID 
     const id = e.target.getAttribute("id");
     const token = localStorage.getItem("token");
@@ -108,25 +110,33 @@ const deleteWork = async function(e){
         e.target.parentElement.remove();
         //Suppression gallery 
          const galleryImg = document.querySelector(`.gallery img[data-id="${id}"]`);
-         console.log(id)
-         console.log(galleryImg)
+        
          if (galleryImg) galleryImg.parentElement.remove()
     }
     console.log("travail supprimé")
+    } catch(error) {
+        console.error("Une erreur est survenue : " + error.message)
+    }
 }
 
 
 // Select categories
-const responseCategories = await fetch('http://localhost:5678/api/categories')
-const categories = await responseCategories.json()
-const select = document.querySelector("select")
 
-categories.forEach(c => {
-    const option = document.createElement("option")
-    option.innerText = c.name
-    option.value = c.id;
-    select.appendChild(option)
-})
+async function remplirSelectCategories(){
+    
+        const select = document.querySelector("select")
+        select.innerHTML =""
+        const optionVide = document.createElement("option")
+        select.appendChild(optionVide)
+
+        window.categories.forEach(c => {
+            const option = document.createElement("option")
+            option.innerText = c.name
+            option.value = c.id;
+            select.appendChild(option)
+        })
+    
+}
 
 
 
@@ -137,7 +147,6 @@ categories.forEach(c => {
 const addWork = async function(e){
     e.preventDefault()
 
-    const form = document.querySelector(".form-add-work")
     const token = localStorage.getItem("token");
 
     const imageFile = e.target.querySelector("[name=image]").files[0] 
@@ -196,14 +205,10 @@ const addWork = async function(e){
         imagesModal.appendChild(workContainer)
         workContainer.appendChild(imageModal)
         workContainer.appendChild(trash)
-
-
     }
-    else {
-        console.error("Erreur");
-    }
+    
 } catch(error){
-    console.error("Erreur réseau :", error)
+    console.error(`Une erreur est survenue : ${error.message}` )
 }
 }
 
@@ -214,23 +219,25 @@ form.addEventListener("submit", addWork)
 //WORK PREVIEW 
 
 
-const input = document.querySelector("form input")
-
-input.addEventListener("change", ()=> {
+const workPreview = function(e){
+    const input = document.querySelector("form input")
     const file = input.files[0]
-if(file){
-
-const formFilesContainer = document.querySelector(".form-files")
-const formFiles = [...formFilesContainer.children];
-formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
-
-
-const imageFile = document.createElement("img")
-imageFile.src = URL.createObjectURL(file)
-imageFile.alt = "Aperçu de l'image selectionné"
-imageFile.classList.add("preview-image")
-
-
-formFilesContainer.appendChild(imageFile)
+    if(file){
+        const formFilesContainer = document.querySelector(".form-files")
+        const formFiles = [...formFilesContainer.children];
+        formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
+        
+        
+        const imageFile = document.createElement("img")
+        imageFile.src = URL.createObjectURL(file)
+        imageFile.alt = "Aperçu de l'image selectionné"
+        imageFile.classList.add("preview-image")
+        
+        
+        formFilesContainer.appendChild(imageFile)
+    }
 }
-})
+
+const input = document.querySelector("form input")
+input.addEventListener("change", workPreview )
+    

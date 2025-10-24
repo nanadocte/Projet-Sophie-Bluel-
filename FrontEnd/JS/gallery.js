@@ -1,4 +1,31 @@
 
+
+
+//ajouter dynamiquement les travaux sur la page d’accueil.
+export function getWorks(works) { 
+    
+    const gallery = document.querySelector(".gallery"); 
+
+    
+    document.querySelector(".gallery").innerHTML= "";
+
+
+    works.forEach(element => { 
+        
+        const figure = document.createElement("figure"); 
+        const img = document.createElement("img"); 
+        const figcaption = document.createElement("figcaption"); 
+        img.setAttribute("src", element.imageUrl); 
+        img.setAttribute("alt", element.title); 
+        img.setAttribute("data-id", element.id)
+        figcaption.innerText = element.title; 
+        gallery.appendChild(figure); 
+        figure.appendChild(img); 
+        figure.appendChild(figcaption); 
+    }); 
+} 
+
+
 // Selection filtres et affichages en conséquent 
 export function selectionButton(works, getWorks) {
 const buttons = document.querySelectorAll(".portfolio-filtres button")
@@ -12,14 +39,14 @@ button.addEventListener("click", (event)=>{
 
     // Add functionality to filter 
     const categoryName = button.textContent.trim();
-    const filteredWorks = categoryName === "Tous" 
-        ? works 
-        : works.filter(work => work.category.name === categoryName)
+    const filteredWorks = categoryName === "Tous" ? 
+        works : works.filter(work => work.category.name === categoryName)
 
     getWorks(filteredWorks)
     }
 )})
 }
+
 
 
 //Affichage dynamique des boutons 
@@ -35,9 +62,10 @@ export function getButtons (works) {
     portfolio.appendChild(liTous);
 
     //bouton avec categories
-    const categories = works.map(work => work.category.name)
+    // const categories = works.map(work => work.category.name)
+    // const categoriesName = [...new Set(categories)]
+    const categories = window.categories.map(c => c.name)
     const categoriesName = [...new Set(categories)]
-
     categoriesName.forEach(category => {
         const newList = document.createElement("li")
         const newButton = document.createElement("button")

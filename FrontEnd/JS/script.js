@@ -1,40 +1,33 @@
-import { selectionButton, getButtons } from './filtres.js';
+import { selectionButton, getButtons, getWorks } from './gallery.js';
 import {affichageEdition, logOut} from './edition.js' ;
 
-const response = await fetch("http://localhost:5678/api/works"); 
-const works = await response.json(); 
 
 
-function main (){
-    getWorks(works)
-    getButtons(works)
-    selectionButton(works, getWorks)
+
+
+
+window.works = []
+window.categories = []
+
+async function  main (){
+    try{
+    const response = await fetch("http://localhost:5678/api/works"); 
+    window.works = await response.json(); 
+    const responseCategories = await fetch("http://localhost:5678/api/categories")
+    window.categories = await responseCategories.json()
+    }
+    catch(error) {
+        console.error(error.message)
+    }
+
+    getWorks(window.works)
+    getButtons(window.works)
+    selectionButton(window.works, getWorks)
     affichageEdition()
     logOut()
 }
 
 
-//ajouter dynamiquement les travaux sur la page d’accueil.
-export function getWorks(works) { 
-    const gallery = document.querySelector(".gallery"); 
-    
-    document.querySelector(".gallery").innerHTML= "";
-
-
-    works.forEach(element => { 
-        
-        const figure = document.createElement("figure"); 
-        const img = document.createElement("img"); 
-        const figcaption = document.createElement("figcaption"); 
-        img.setAttribute("src", element.imageUrl); 
-        img.setAttribute("alt", element.title); 
-        img.setAttribute("data-id", element.id)
-        figcaption.innerText = element.title; 
-        gallery.appendChild(figure); 
-        figure.appendChild(img); 
-        figure.appendChild(figcaption); 
-    }); 
-} 
 
 main()
 
