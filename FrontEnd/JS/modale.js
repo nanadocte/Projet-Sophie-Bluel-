@@ -38,6 +38,7 @@ const closeModal = function(event){
             window.setTimeout(function(){
                 modal.style.display = "none";
                 modal = null
+                returnModalToGallery()
 
             }, 300)
             modal.removeAttribute("aria-modal");
@@ -45,7 +46,6 @@ const closeModal = function(event){
             modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", closeModal));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
             resetAddWorkForm()
-            returnModalToGallery()
 }
     //modal accessibilité
 const focusInModal = (e)=> {
