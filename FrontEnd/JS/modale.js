@@ -1,5 +1,3 @@
-
-
 const stopPropagation = function(event){
         event.stopPropagation()
     }

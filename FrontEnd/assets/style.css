@@ -506,3 +506,36 @@ p.error-message {
 .form-add-work .wrong-password {
     border: 2px solid #aa430324;
 } 
+
+
+button.modal-btn.delete {
+    padding: 0;
+}
+
+
+form.form-add-work {
+    gap: 40px;
+}
+
+form.form-add-work {
+    align-items: center;
+}
+
+h3.title-modal {
+    padding-bottom: 40px;
+}
+
+.form-add-work div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container-categorie-form {
+    padding-bottom: 40px;
+    border-bottom: 1px solid #B3B3B3;
+}
+
+button.submit {
+    background: #B3B3B3;
+}

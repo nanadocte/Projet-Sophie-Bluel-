@@ -7,10 +7,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-	<meta name="description" content="">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script type="module" src="./JS/script.js" defer></script>
+	<meta name="description" content="">
+	<script type="module" src="./JS/script.js" ></script>
 
 
 </head>
@@ -53,11 +53,11 @@
 			</div>	
 		</div>
 
-		<aside id="modal1" class="modal" aria-hidden="true" role="dialog" aria-labelledby="title-modal" style="display: none">
+		<aside id="modal1" class="modal" aria-hidden="true" aria-labelledby="title-modal" style="display: none">
 			
 			<div class="modal-wrapper js-modal-stop modal-gallery">
 				<button class="modal-btn js-modal-close"><i class="fa-solid fa-xmark"></i></button>
-				<h3 class="title-modal">Galerie photo</h3>
+				<h3 id="title-modal" class="title-modal">Galerie photo</h3>
 				<div class="modal-img"></div>
 				<button class="js-modal-form" data-target="#modal2">
 					Ajouter une photo
@@ -83,15 +83,14 @@
 						<label for="fileElem">+ Ajouter photo</label>
 						<p>jpg, png : 4mo max</p>
 					</div>
+					<div>
 					<label for="titre">Titre</label>
 					<input type="text" name="titre" id="titre">
-
+					</div>
+					<div class="container-categorie-form">
 					<label for="categorie">Catégorie</label>
-					<select name="categorie" id="categorie">
-						<img>
-					
-					</select>
-
+					<select name="categorie" id="categorie"></select>
+					</div>
 					<button class="submit" type="submit">Valider</button>
 				</form>
 			</div>
