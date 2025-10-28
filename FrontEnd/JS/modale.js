@@ -1,62 +1,115 @@
 
-//supprimer l'input file si ajout d'un nv fichier 
 
 const stopPropagation = function(event){
         event.stopPropagation()
     }
-// Fonction close and open modal gallery
+const focusableSelector = 'button, a, input, textarea, select'
+let focusables = []
+const containerImgModal = document.querySelector(".modal-img")
+
+
+// OPEN - CLOSE 
+
+    // modal -gallery
 let modal = null
+
 const openModal = function(event, works){
     event.preventDefault()
-    let target = document.querySelector(event.currentTarget.getAttribute("href"))
-            target.style.display = null
-            target.removeAttribute("aria-hidden")
-            target.setAttribute("aria-modal", "true")
 
-            const verificationPresence = document.querySelector(".modal-img")
-            if (verificationPresence.children.length=== 0){
-                getWorksModal(works)
-            }
-            modal = target
-            modal.addEventListener("click", closeModal)
-            modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", closeModal))
-            modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
+    modal = document.querySelector(event.currentTarget.getAttribute("href"))
+    modal.style.display = null
+    modal.removeAttribute("aria-hidden")
+    modal.setAttribute("aria-modal", "true")
+    
+    if (containerImgModal && containerImgModal.children.length=== 0){
+        showWorksModal(works)
+    }
+    focusables = Array.from(modal.querySelectorAll(focusableSelector))
+    focusables[0].focus()
+    
+    modal.addEventListener("click", closeModal)
+    modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", closeModal))
+    modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
 }
 
 const closeModal = function(event){
+
     if (modal=== null) return;
     event.preventDefault();
-            modal.style.display = "none";
-            modal.setAttribute("aria-hidden", "true");
+    modal.setAttribute("aria-hidden", "true");
+            window.setTimeout(function(){
+                modal.style.display = "none";
+                modal = null
+
+            }, 300)
             modal.removeAttribute("aria-modal");
             modal.removeEventListener("click", closeModal);
             modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", closeModal));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
-            modal = null
+            resetAddWorkForm()
+            returnModalToGallery()
+}
+    //modal accessibilité
+const focusInModal = (e)=> {
+     e.preventDefault()
+      if (!focusables.length) return
+    let index = focusables.findIndex(f => f=== modal.querySelector(':focus'))
+    if (e.shiftKey === true ) {
+        index -- 
+    }
+    else {
+        index++
+    }
+    if (index>=focusables.length) {
+        index = 0
+    }
+    if (index < 0) {
+        index = focusables.length -1
+    }
+   
+    focusables[index].focus()
 }
 
+window.addEventListener("keydown", function(e){
+    if (e.key === "Escape" || e.key === "Esc" ){
+        closeModal(e)
+    }
+    if (e.key === "Tab" && modal !== null ){
+        focusInModal(e)
+    }
+})
 
-// Open and close MODALFORM
+
+    // modal -form 
+const modalGallery = document.querySelector(".modal-gallery")
+const modalForm = document.querySelector(".modal-form")
 const openModalForm = function(categories){
-    document.querySelector(".modal-gallery").style.display ="none"
-    document.querySelector(".modal-form").style.display = null
+    modalGallery.style.display ="none"
+    modalForm.style.display = null
     remplirSelectCategories(categories)
+    focusables = Array.from(modalForm.querySelectorAll(focusableSelector))
+
 }
 
-const retourModalGallery = function(){
-    document.querySelector(".modal-form").style.display ="none"
-    document.querySelector(".modal-gallery").style.display = null
+const returnModalToGallery = function(){
+    modalForm.style.display ="none"
+    modalGallery.style.display = null
+    focusables = Array.from(modalGallery.querySelectorAll(focusableSelector))
 }
 
 
-export function gererModal(works, categories){
 
-    document.querySelector(".js-modal-form").addEventListener("click", () => openModalForm(categories))
-    
-    document.querySelector(".js-modal-retour").addEventListener("click", retourModalGallery)
-    
+
+export function initModal(works, categories){
+
     document.querySelectorAll(".js-modal").forEach(a=> {
-        a.addEventListener("click", (event)=> openModal(event, works))
+        a.addEventListener("click", (event)=> {
+            openModal(event, works);
+
+    })
+    
+    document.querySelector(".js-modal-form").addEventListener("click", () => openModalForm(categories))
+    document.querySelector(".js-modal-retour").addEventListener("click", returnModalToGallery)
     })
     
 }
@@ -65,14 +118,17 @@ export function gererModal(works, categories){
 
 
 
-// Récupération des travaux sur la modale 
-export function getWorksModal (works){
-    const sectionImg = document.querySelector(".modal-img")
+
+function showWorksModal (works){
+    
     works.forEach(work => {
         const workContainer = document.createElement("div")
+        const button = document.createElement("button")
         const img = document.createElement("img");
         const trash = document.createElement("img");
         workContainer.classList.add("workContainer")
+
+        button.classList.add("modal-btn")
 
         img.setAttribute("src", work.imageUrl); 
         img.setAttribute("alt", work.title);
@@ -82,21 +138,25 @@ export function getWorksModal (works){
         trash.setAttribute("alt", "supprimer")
         trash.setAttribute("data-id", work.id)
         trash.addEventListener("click", deleteWork);
-        trash.classList.add("delete")
+        button.classList.add("delete")
 
-        sectionImg.appendChild(workContainer)
-        workContainer.appendChild(trash)
+        containerImgModal.appendChild(workContainer)
+        workContainer.appendChild(button)
+        button.appendChild(trash)
         workContainer.appendChild(img);
     })
+        focusables = Array.from(modal.querySelectorAll(focusableSelector))
+
 }
 
 
 // DELETE WORKS 
 const deleteWork = async function(e){
-    // Confirmation ? 
+    // Confirmation 
     if (!confirm("Souhaitez vous supprimer ce travail ?")) return;
     try {
-    // GET ID 
+
+    // get ID
     const id = e.target.getAttribute("data-id");
     if (!id) {
         console.error("ID manquant pour la suppression du travail.");
@@ -104,7 +164,7 @@ const deleteWork = async function(e){
     }
     const token = localStorage.getItem("token");
 
-    //DELETE ID
+    // delete ID
     const response = 
         await fetch(`http://localhost:5678/api/works/${id}`, {
                 method:"DELETE",
@@ -113,8 +173,11 @@ const deleteWork = async function(e){
                 }
         })
     if (response.ok) {
-        e.target.parentElement.remove();
-        //Suppression gallery 
+
+        //suppresion dans modale
+        const workContainer = e.target.closest(".workContainer");
+    if (workContainer) workContainer.remove();
+        //Suppression dans gallery 
          const galleryImg = document.querySelector(`.gallery img[data-id="${id}"]`);
         
          if (galleryImg) galleryImg.parentElement.remove()
@@ -126,9 +189,9 @@ const deleteWork = async function(e){
 }
 
 
-// Select categories
+// SELECTIONS CATEGORIES  
 
-export async function remplirSelectCategories(categories){
+async function remplirSelectCategories(categories){
     
         const select = document.querySelector("select")
         select.innerHTML =""
@@ -146,110 +209,171 @@ export async function remplirSelectCategories(categories){
 
 
 
-// Ajout de travaux 
-
-//add event submit 
-
+// ADD WORKS
 const addWork = async function(e){
     e.preventDefault()
-
+    let formData
     const token = localStorage.getItem("token");
+    // Récuperer les données dans form
+    try {const imageFile = e.target.querySelector("[name=image]").files[0] 
+        const title = e.target.querySelector("[name=titre]").value
+        const category = e.target.querySelector("[name=categorie]").value
+        if (!imageFile || !title || !category){
+            throw new Error('Certaines données sont manquantes')
+        }
 
-    const imageFile = e.target.querySelector("[name=image]").files[0] 
-    const title = e.target.querySelector("[name=titre]").value
-    const category = e.target.querySelector("[name=categorie]").value
+        // préparation formData
+        formData= new FormData() 
+        formData.append("image", imageFile);
+        formData.append("title", title);
+        formData.append("category", category)
+    }
+    catch(error) {
+        console.error(error.message)
+        let formulaire = document.querySelector(".form-add-work")
+        afficherErreur(formulaire)
+        return
+    }
 
-    const formData= new FormData() 
-    formData.append("image", imageFile);
-    formData.append("title", title);
-    formData.append("category", category)
-
-    
+    //envoi serveur
     try {
         const response = await fetch(`http://localhost:5678/api/works`, {
                         method: "POST",
                         headers : { "accept": 'application/json', 
                                 "Authorization": `Bearer ${token}`},
                         body: formData
-        });
-        
+        })
     if (response.ok){
-        console.log("Envoi effectué")
-        // ADD work to gallery 
         const newWork = await response.json()
-        const gallery = document.querySelector(".gallery")
-        const figure = document.createElement("figure")
-        const image = document.createElement("img")
-        const figcaption = document.createElement("figcaption")
+        console.log("Envoi effectué")
+        showNewWorkGallery(newWork)
+        showNewWorkModal(newWork)
+        resetAddWorkForm()
+        returnModalToGallery()
+        closeModal(e)
 
-        image.src = newWork.imageUrl
-        image.alt = newWork.title
-        image.dataset.id = newWork.id
-        figcaption.innerText = newWork.title
-
-        gallery.appendChild(figure)
-        figure.appendChild(image)
-        figure.appendChild(figcaption)
-
-
-        //ADD work to modal
-        const imagesModal = document.querySelector(".modal-img")
-        const workContainer = document.createElement("div")
-        workContainer.classList.add("workContainer")
-        const imageModal = document.createElement("img")
-        const trash = document.createElement("img")
-
-        imageModal.src = newWork.imageUrl
-        imageModal.alt = newWork.title
-        imageModal.classList.add("imagesModal")
-        trash.alt = "supprimer"
-        trash.src = `./assets/icons/trash.svg`
-        trash.classList.add("delete")
-        trash.setAttribute("data-id", newWork.id)
-        trash.addEventListener("click", deleteWork);
-
-        imagesModal.appendChild(workContainer)
-        workContainer.appendChild(imageModal)
-        workContainer.appendChild(trash)
     }
+    } catch(error){
+        console.error(`Une erreur est survenue : ${error.message}` )
+        
+    }
+}
+
+    // to gallery
+function showNewWorkGallery (newWork){
+    const gallery = document.querySelector(".gallery")
+    const figure = document.createElement("figure")
+    const image = document.createElement("img")
+    const figcaption = document.createElement("figcaption")
+
+
+
+    image.src = newWork.imageUrl
+    image.alt = newWork.title
+    image.dataset.id = newWork.id
+    figcaption.innerText = newWork.title
+
+    gallery.appendChild(figure)
+    figure.appendChild(image)
+    figure.appendChild(figcaption)
+}
+
+    // to modal 
+function showNewWorkModal(newWork){
+    const workContainer = document.createElement("div")
+    const button = document.createElement("button")
+    const imageModal = document.createElement("img")
+    const trash = document.createElement("img")
     
-} catch(error){
-    console.error(`Une erreur est survenue : ${error.message}` )
+    
+    workContainer.classList.add("workContainer")
+    button.classList.add("modal-btn", "delete")
+
+
+    imageModal.src = newWork.imageUrl
+    imageModal.alt = newWork.title
+    imageModal.classList.add("imagesModal")
+    trash.alt = "supprimer"
+    trash.src = `./assets/icons/trash.svg`
+    trash.setAttribute("data-id", newWork.id)
+    trash.addEventListener("click", deleteWork);
+
+    containerImgModal.appendChild(workContainer)
+    workContainer.appendChild(imageModal)
+    workContainer.appendChild(button)
+    button.appendChild(trash)
+    focusables = Array.from(modal.querySelectorAll(focusableSelector))
+
 }
-}
-
-// function ajoutDB 
 
 
-const workPreview = function(e){
+
+const workPreview = function(){
+    // recuperer l'image 
     const input = document.querySelector("form input")
     const file = input.files[0]
-    if(file){
-        const formFilesContainer = document.querySelector(".form-files")
-        const formFiles = [...formFilesContainer.children];
-        formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
-        
-        
-        const imageFile = document.createElement("img")
-        imageFile.src = URL.createObjectURL(file)
-        imageFile.alt = "Aperçu de l'image selectionné"
-        imageFile.classList.add("preview-image")
-        
-        
-        formFilesContainer.appendChild(imageFile)
-    }
+    
+    if(!file) return 
+    // Récuperer le container et les enfants pour les cacher 
+    const formFilesContainer = document.querySelector(".form-files")
+    console.log(formFilesContainer)
+    const formFiles = [...formFilesContainer.children];
+    console.log(formFiles)
+    formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
+
+    const oldPreview = document.querySelector(".preview-image")
+    // Ajout visuel de l'image 
+    if(oldPreview) {oldPreview.remove()}
+    const imageFile = document.createElement("img")
+    imageFile.src = URL.createObjectURL(file)
+    imageFile.alt = "Aperçu de l'image selectionné"
+    imageFile.classList.add("preview-image")
+    
+    formFilesContainer.appendChild(imageFile)
+    
 }
 
 
-export function gererAjoutModal(){
 const form = document.querySelector(".form-add-work")
+export function initAddWork() {
 form.addEventListener("submit", addWork)
 const input = document.querySelector("form input")
 input.addEventListener("change", workPreview )
 }
-//WORK PREVIEW 
 
 
+function resetAddWorkForm(){
+    form.reset()
+    const image = document.querySelector(".preview-image")
+    if (image) image.remove()
+    const formFiles = document.querySelectorAll(".hidden-for-preview")
+    formFiles.forEach(e=> e.classList.remove("hidden-for-preview"))
+}
 
 
     
+
+// Messages d'erreur 
+function afficherErreur(formulaire) {
+    formulaire.querySelectorAll(".wrong-password").forEach(el => {
+        el.classList.remove("wrong-password")
+    })
+    // Ajouter une classe à tous les inputs du formulaire
+    const inputs = formulaire.querySelectorAll("input, select")
+    console.log(inputs)
+    const emptyInput = Array.from(inputs).filter(input => !input.value)
+    emptyInput.forEach(input => input.classList.add("wrong-password"))
+    const inputFile = document.querySelector("#fileElem")
+    if (!inputFile.files[0]){
+        const containerFiles = document.querySelector(".form-files")
+        containerFiles.querySelector("label").classList.add("wrong-password")
+    }
+
+    // Ajouter un paragraphe d'erreur s'il n'existe pas déjà
+    if (!formulaire.querySelector(".error-message")) {
+        const erreur = document.createElement("p")
+        erreur.classList.add("error-message")
+        erreur.textContent = "Veuillez remplir tous les champs."
+        formulaire.appendChild(erreur)
+    }
+}

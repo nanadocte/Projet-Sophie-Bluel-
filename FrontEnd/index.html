@@ -56,8 +56,8 @@
 		<aside id="modal1" class="modal" aria-hidden="true" role="dialog" aria-labelledby="title-modal" style="display: none">
 			
 			<div class="modal-wrapper js-modal-stop modal-gallery">
-				<i class="fa-solid fa-xmark js-modal-close"></i>
-				<h3 id="title-modal">Galerie photo</h3>
+				<button class="modal-btn js-modal-close"><i class="fa-solid fa-xmark"></i></button>
+				<h3 class="title-modal">Galerie photo</h3>
 				<div class="modal-img"></div>
 				<button class="js-modal-form" data-target="#modal2">
 					Ajouter une photo
@@ -66,10 +66,10 @@
 
 			<div style="display: none;" class="modal-wrapper js-modal-stop modal-form">
 				<nav class="form">
-				<i class="fa-solid fa-arrow-left js-modal-retour"></i>
-				<i class="fa-solid fa-xmark js-modal-close"></i>
+				<button class="modal-btn js-modal-retour"><i class="fa-solid fa-arrow-left"></i></button>
+				<button class="modal-btn js-modal-close"><i class="fa-solid fa-xmark"></i></button>
 				</nav>
-				<h3 id="title-modal">Ajout photo</h3>
+				<h3 class="title-modal">Ajout photo</h3>
 				<form class="form-add-work">
 					<div class="form-files">
 						<i class="fa-solid fa-image"></i>
@@ -124,7 +124,7 @@
 <footer>
 	<nav>
 		<ul>
-			<li>Mentions légales</li>
+			<li><a href="#">Mentions légales</a></li>
 		</ul>
 	</nav>
 </footer>

@@ -39,8 +39,9 @@ function afficherErreur() {
         input.forEach(input => input.classList.add("wrong-password"))
 
         //Ajoute d'un paragraphe erreur 
-        if (!formulaire.querySelector("p")){
+        if (!formulaire.querySelector(".error-message")){
             const erreur = document.createElement("p")
+            erreur.classList.add("error-message")
             erreur.textContent 
             = "Erreur dans l’identifiant ou le mot de passe"
             formulaire.appendChild(erreur)}

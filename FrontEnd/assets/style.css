@@ -28,6 +28,14 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+
+
+input[type="submit"], .portfolio-filtres button, .modal button, 
+label[for="fileElem"], i.fa-solid.fa-arrow-left.js-modal-retour, 
+i.fa-solid.fa-xmark.js-modal-close, #categorie {
+    cursor: pointer;
+}
+
 body {
 	line-height: 1;
 }
@@ -272,6 +280,7 @@ footer nav {
     gap: 11.5px;
     font-size: 16px;
     font-weight: 400;
+	cursor: default;
 }
 
 .edition-bande i{
@@ -300,7 +309,25 @@ footer nav {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	animation: fadeIn .3s ease-out;
 }
+
+.modal[aria-hidden="true"] {
+	animation : fadeOut .3s ease-out forwards
+
+}
+
+@keyframes fadeIn {
+	from { opacity: 0;}
+	to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+	from {opacity : 1}
+	to {opacity : 0}
+}
+
+
 
 .modal-wrapper{
 	background: white;
@@ -331,7 +358,7 @@ footer nav {
 
 }
 
-.modal button {
+.js-modal-form, button[type="submit"] {
 width: 179px;
     background-color: #1D6154;
     color: white;
@@ -352,7 +379,7 @@ i.fa-solid.fa-xmark.js-modal-close {
 	width: 79.63px;
 }
 
-h3#title-modal, h3#title-modal2 {
+.title-modal {
     font-size: 26px;
 }
 
@@ -362,9 +389,12 @@ h3#title-modal, h3#title-modal2 {
 
 .delete {
 	position:absolute;
-	padding: 5px;
 	right: 0;
-    cursor: pointer;
+}
+
+.delete img {
+	padding: 5px;
+
 }
 
 
@@ -427,7 +457,7 @@ label[for="fileElem"] {
 	width: 100%;
 }
 
-#titre, #categorie {
+.form-add-work input, .form-add-work select {
     border: none;
     box-shadow: 0px 4px 14px 0px #00000017;
     height: 51px;
@@ -437,7 +467,8 @@ label[for="fileElem"] {
     padding: 0;
     color: #6C6C6C;
 }
-#categorie {
+
+.form-add-work select {
 	appearance: none;
 	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C6C6C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
 	background-repeat: no-repeat;
@@ -453,3 +484,25 @@ img.preview-image {
 .hidden-for-preview {
 	display: none;
 }
+
+
+.modal-btn {
+    background: none;
+    border: none;
+}
+
+button.modal-btn.js-modal-close {
+    align-self: flex-end;
+}
+
+
+
+
+p.error-message {
+    align-self: center;
+}
+
+
+.form-add-work .wrong-password {
+    border: 2px solid #aa430324;
+} 
