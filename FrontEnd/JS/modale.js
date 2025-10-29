@@ -1,3 +1,4 @@
+
 const stopPropagation = function(event){
         event.stopPropagation()
     }
@@ -22,7 +23,6 @@ const openModal = function(event, works){
     if (containerImgModal && containerImgModal.children.length=== 0){
         showWorksModal(works)
     }
-    focusables = Array.from(modal.querySelectorAll(focusableSelector))
     focusables[0].focus()
     
     modal.addEventListener("click", closeModal)
@@ -118,7 +118,6 @@ export function initModal(works, categories){
 
 
 function showWorksModal (works){
-    
     works.forEach(work => {
         const workContainer = document.createElement("div")
         const button = document.createElement("button")
@@ -143,7 +142,7 @@ function showWorksModal (works){
         button.appendChild(trash)
         workContainer.appendChild(img);
     })
-        focusables = Array.from(modal.querySelectorAll(focusableSelector))
+    focusables = Array.from(modal.querySelectorAll(focusableSelector))
 
 }
 
@@ -242,6 +241,7 @@ const addWork = async function(e){
                         body: formData
         })
     if (response.ok){
+        
         const newWork = await response.json()
         console.log("Envoi effectué")
         showNewWorkGallery(newWork)
@@ -334,9 +334,9 @@ const workPreview = function(){
 
 const form = document.querySelector(".form-add-work")
 export function initAddWork() {
-form.addEventListener("submit", addWork)
-const input = document.querySelector("form input")
-input.addEventListener("change", workPreview )
+    form.addEventListener("submit", addWork)
+    const input = document.querySelector("form input")
+    input.addEventListener("change", workPreview )
 }
 
 
