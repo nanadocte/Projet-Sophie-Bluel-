@@ -436,7 +436,7 @@ i.fa-solid.fa-image {
 
 .form-files {
     gap: 10px;
-    /* padding: 20px; */
+ 
 }
 
 label[for="fileElem"] {
@@ -503,7 +503,7 @@ p.error-message {
 }
 
 
-.form-add-work .wrong-password {
+.form-add-work .wrong-form {
     border: 2px solid #aa430324;
 } 
 
@@ -539,3 +539,9 @@ h3.title-modal {
 button.submit {
     background: #B3B3B3;
 }
+
+
+button.submit-green {
+	background-color: #1D6154;
+}
+

@@ -6,6 +6,7 @@ const focusableSelector = 'button, a, input, textarea, select'
 let focusables = []
 const containerImgModal = document.querySelector(".modal-img")
 const select = document.querySelector("select")
+const formulaire = document.querySelector(".form-add-work")
 
 
 // OPEN - CLOSE 
@@ -335,6 +336,8 @@ export function initAddWork() {
     form.addEventListener("submit", addWork)
     
     inputFile.addEventListener("change", workPreview )
+    const inputs = form.querySelectorAll("input, select")
+    inputs.forEach(i=> i.addEventListener("change", submitActivate))
 }
 
 
@@ -348,7 +351,6 @@ function resetAddWorkForm(){
 
 
     
-const formulaire = document.querySelector(".form-add-work")
 
 // Messages d'erreur 
 function afficherErreur() {
@@ -358,10 +360,10 @@ function afficherErreur() {
     // Ajouter une classe à tous les inputs du formulaire
     const inputs = formulaire.querySelectorAll("input, select")
     const emptyInput = Array.from(inputs).filter(input => !input.value)
-    emptyInput.forEach(input => input.classList.add("wrong-password"))
+    emptyInput.forEach(input => input.classList.add("wrong-form"))
     if (!inputFile.files[0]){
         const containerFiles = document.querySelector(".form-files")
-        containerFiles.querySelector("label").classList.add("wrong-password")
+        containerFiles.querySelector("label").classList.add("wrong-form")
     }
 
     // Ajouter un paragraphe d'erreur s'il n'existe pas déjà
@@ -370,12 +372,28 @@ function afficherErreur() {
         erreur.classList.add("error-message")
         erreur.textContent = "Veuillez remplir tous les champs."
         formulaire.appendChild(erreur)
+
     }
 }
 
 function suppressionAfficheErreur (){
-formulaire.querySelectorAll(".wrong-password").forEach(el => {
-        el.classList.remove("wrong-password")
+formulaire.querySelectorAll(".wrong-form").forEach(el => {
+        el.classList.remove("wrong-form")
     })
     if (formulaire.querySelector(".error-message")) formulaire.querySelector(".error-message").remove()
+}
+
+
+
+function submitActivate (){ 
+    suppressionAfficheErreur()
+     const inputs = form.querySelectorAll("input, select")
+    const emptyInput = Array.from(inputs).filter(input => !input.value)
+    const submit = formulaire.querySelector(".submit")
+    if (emptyInput.length === 0) {
+        submit.classList.add("submit-green")
+    }
+    else {
+        submit.classList.remove("submit-green")
+}
 }
