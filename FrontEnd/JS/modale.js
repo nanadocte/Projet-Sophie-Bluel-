@@ -5,6 +5,7 @@ const stopPropagation = function(event){
 const focusableSelector = 'button, a, input, textarea, select'
 let focusables = []
 const containerImgModal = document.querySelector(".modal-img")
+const select = document.querySelector("select")
 
 
 // OPEN - CLOSE 
@@ -23,6 +24,7 @@ const openModal = function(event, works){
     if (containerImgModal && containerImgModal.children.length=== 0){
         showWorksModal(works)
     }
+    focusables = Array.from(modalGallery.querySelectorAll(focusableSelector))
     focusables[0].focus()
     
     modal.addEventListener("click", closeModal)
@@ -37,8 +39,8 @@ const closeModal = function(event){
     modal.setAttribute("aria-hidden", "true");
             window.setTimeout(function(){
                 modal.style.display = "none";
-                modal = null
                 returnModalToGallery()
+                modal = null
 
             }, 300)
             modal.removeAttribute("aria-modal");
@@ -46,6 +48,7 @@ const closeModal = function(event){
             modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", closeModal));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
             resetAddWorkForm()
+            suppressionAfficheErreur()
 }
     //modal accessibilité
 const focusInModal = (e)=> {
@@ -84,7 +87,9 @@ const modalForm = document.querySelector(".modal-form")
 const openModalForm = function(categories){
     modalGallery.style.display ="none"
     modalForm.style.display = null
-    remplirSelectCategories(categories)
+    if (select && select.children.length=== 0){ 
+        remplirSelectCategories(categories)
+    }
     focusables = Array.from(modalForm.querySelectorAll(focusableSelector))
 
 }
@@ -142,7 +147,6 @@ function showWorksModal (works){
         button.appendChild(trash)
         workContainer.appendChild(img);
     })
-    focusables = Array.from(modal.querySelectorAll(focusableSelector))
 
 }
 
@@ -190,8 +194,6 @@ const deleteWork = async function(e){
 
 async function remplirSelectCategories(categories){
     
-        const select = document.querySelector("select")
-        select.innerHTML =""
         const optionVide = document.createElement("option")
         select.appendChild(optionVide)
 
@@ -227,8 +229,7 @@ const addWork = async function(e){
     }
     catch(error) {
         console.error(error.message)
-        let formulaire = document.querySelector(".form-add-work")
-        afficherErreur(formulaire)
+        afficherErreur()
         return
     }
 
@@ -300,23 +301,20 @@ function showNewWorkModal(newWork){
     workContainer.appendChild(imageModal)
     workContainer.appendChild(button)
     button.appendChild(trash)
-    focusables = Array.from(modal.querySelectorAll(focusableSelector))
 
 }
 
 
 
+const inputFile = document.querySelector("#fileElem")
 const workPreview = function(){
     // recuperer l'image 
-    const input = document.querySelector("form input")
-    const file = input.files[0]
+    const file = inputFile.files[0]
     
     if(!file) return 
     // Récuperer le container et les enfants pour les cacher 
     const formFilesContainer = document.querySelector(".form-files")
-    console.log(formFilesContainer)
     const formFiles = [...formFilesContainer.children];
-    console.log(formFiles)
     formFiles.forEach(f=> f.classList.add("hidden-for-preview"))
 
     const oldPreview = document.querySelector(".preview-image")
@@ -335,8 +333,8 @@ const workPreview = function(){
 const form = document.querySelector(".form-add-work")
 export function initAddWork() {
     form.addEventListener("submit", addWork)
-    const input = document.querySelector("form input")
-    input.addEventListener("change", workPreview )
+    
+    inputFile.addEventListener("change", workPreview )
 }
 
 
@@ -350,18 +348,17 @@ function resetAddWorkForm(){
 
 
     
+const formulaire = document.querySelector(".form-add-work")
 
 // Messages d'erreur 
-function afficherErreur(formulaire) {
-    formulaire.querySelectorAll(".wrong-password").forEach(el => {
-        el.classList.remove("wrong-password")
-    })
+function afficherErreur() {
+
+
+    suppressionAfficheErreur()
     // Ajouter une classe à tous les inputs du formulaire
     const inputs = formulaire.querySelectorAll("input, select")
-    console.log(inputs)
     const emptyInput = Array.from(inputs).filter(input => !input.value)
     emptyInput.forEach(input => input.classList.add("wrong-password"))
-    const inputFile = document.querySelector("#fileElem")
     if (!inputFile.files[0]){
         const containerFiles = document.querySelector(".form-files")
         containerFiles.querySelector("label").classList.add("wrong-password")
@@ -374,4 +371,11 @@ function afficherErreur(formulaire) {
         erreur.textContent = "Veuillez remplir tous les champs."
         formulaire.appendChild(erreur)
     }
+}
+
+function suppressionAfficheErreur (){
+formulaire.querySelectorAll(".wrong-password").forEach(el => {
+        el.classList.remove("wrong-password")
+    })
+    if (formulaire.querySelector(".error-message")) formulaire.querySelector(".error-message").remove()
 }
