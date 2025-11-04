@@ -38,7 +38,7 @@ button.addEventListener("click", (event)=>{
     event.target.classList.add("selected")
 
     // Add functionality to filter 
-    const categoryName = button.textContent.trim();
+    const categoryName = button.textContent;
     const filteredWorks = categoryName === "Tous" ? 
         works : works.filter(work => work.category.name === categoryName)
 
