@@ -7,6 +7,7 @@ let focusables = []
 const containerImgModal = document.querySelector(".modal-img")
 const select = document.querySelector("select")
 const formulaire = document.querySelector(".form-add-work")
+let messageErreur = ""
 
 
 // OPEN - CLOSE 
@@ -33,14 +34,14 @@ const openModal = function(event, works){
     modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
 }
 
-const closeModal = function(event){
+const closeModal = function(event, categories){
 
     if (modal=== null) return;
     event.preventDefault();
     modal.setAttribute("aria-hidden", "true");
             window.setTimeout(function(){
                 modal.style.display = "none";
-                returnModalToGallery()
+                switchModal(categories, modalForm, modalGallery)
                 modal = null
 
             }, 300)
@@ -85,15 +86,15 @@ window.addEventListener("keydown", function(e){
     // modal -form 
 const modalGallery = document.querySelector(".modal-gallery")
 const modalForm = document.querySelector(".modal-form")
-const openModalForm = function(categories){
-    modalGallery.style.display ="none"
-    modalForm.style.display = null
+const switchModal = function(categories, modalInitale, modalFinale){
+    modalInitale.style.display ="none"
+    modalFinale.style.display = null
     if (select && select.children.length=== 0){ 
         remplirSelectCategories(categories)
     }
-    focusables = Array.from(modalForm.querySelectorAll(focusableSelector))
-
+    focusables = Array.from(modalFinale.querySelectorAll(focusableSelector))
 }
+
 
 const returnModalToGallery = function(){
     modalForm.style.display ="none"
@@ -104,7 +105,7 @@ const returnModalToGallery = function(){
 
 
 
-export function initModal(works, categories){
+export function initModal(works, categories, ){
 
     document.querySelectorAll(".js-modal").forEach(a=> {
         a.addEventListener("click", (event)=> {
@@ -112,8 +113,8 @@ export function initModal(works, categories){
 
     })
     
-    document.querySelector(".js-modal-form").addEventListener("click", () => openModalForm(categories))
-    document.querySelector(".js-modal-retour").addEventListener("click", returnModalToGallery)
+    document.querySelector(".js-modal-form").addEventListener("click", () => switchModal(categories, modalGallery, modalForm))
+    document.querySelector(".js-modal-retour").addEventListener("click", ()=> switchModal(categories, modalForm, modalGallery))
     })
     
 }
@@ -210,7 +211,7 @@ async function remplirSelectCategories(categories){
 
 
 // ADD WORKS
-const addWork = async function(e){
+const addWork = async function(e, categories){
     e.preventDefault()
     let formData
     const token = localStorage.getItem("token");
@@ -230,6 +231,7 @@ const addWork = async function(e){
     }
     catch(error) {
         console.error(error.message)
+        messageErreur = "Veuillez remplir tous les champs."
         afficherErreur()
         return
     }
@@ -242,18 +244,23 @@ const addWork = async function(e){
                                 "Authorization": `Bearer ${token}`},
                         body: formData
         })
-    if (response.ok){
+    if (!response.ok){
+        messageErreur = "Échec de l'ajout du travail. Veuillez réessayer plus tard."
+        afficherErreur()
+        return
+    }
         
         const newWork = await response.json()
         console.log("Envoi effectué")
         showNewWorkGallery(newWork)
         showNewWorkModal(newWork)
         resetAddWorkForm()
-        returnModalToGallery()
+        switchModal(categories, modalForm, modalGallery)
         closeModal(e)
 
-    }
+    
     } catch(error){
+
         console.error(`Une erreur est survenue : ${error.message}` )
         
     }
@@ -370,7 +377,7 @@ function afficherErreur() {
     if (!formulaire.querySelector(".error-message")) {
         const erreur = document.createElement("p")
         erreur.classList.add("error-message")
-        erreur.textContent = "Veuillez remplir tous les champs."
+        erreur.textContent = messageErreur
         formulaire.appendChild(erreur)
 
     }
@@ -397,3 +404,8 @@ function submitActivate (){
         submit.classList.remove("submit-green")
 }
 }
+
+
+
+
+
