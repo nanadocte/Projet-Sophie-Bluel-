@@ -8,7 +8,6 @@ const containerImgModal = document.querySelector(".modal-img")
 const select = document.querySelector("select")
 const formulaire = document.querySelector(".form-add-work")
 let messageErreur = ""
-let handleClose 
 
 
 // OPEN - CLOSE 
@@ -31,26 +30,24 @@ const openModal = function(event, works, categories){
     focusables[0].focus()
     
     modal.addEventListener("click", (e)=> closeModal(e, categories))
-    handleClose = (e) => closeModal(e, categories);
-    modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", handleClose))
+    modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", (e)=> closeModal(e, categories)))
     modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
 }
 
 const closeModal = function(event, categories){
-
-    if (modal=== null) return;
     event.preventDefault();
     modal.setAttribute("aria-hidden", "true");
+
             window.setTimeout(function(){
+                if (modal) {
                 modal.style.display = "none";
-                if (modalGallery=== null){
                 switchModal(categories, modalForm, modalGallery)}
                 modal = null
 
             }, 300)
             modal.removeAttribute("aria-modal");
             modal.removeEventListener("click", (e)=> closeModal(e, categories));
-            modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", handleClose));
+            modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", (e)=> closeModal(e, categories)));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
             resetAddWorkForm()
             suppressionAfficheErreur()
