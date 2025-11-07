@@ -7,7 +7,7 @@ export function getWorks(works) {
     const gallery = document.querySelector(".gallery"); 
 
     
-    document.querySelector(".gallery").innerHTML= "";
+    gallery.innerHTML= "";
 
 
     works.forEach(element => { 

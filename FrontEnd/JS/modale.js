@@ -8,6 +8,7 @@ const containerImgModal = document.querySelector(".modal-img")
 const select = document.querySelector("select")
 const formulaire = document.querySelector(".form-add-work")
 let messageErreur = ""
+let handleClose 
 
 
 // OPEN - CLOSE 
@@ -15,7 +16,7 @@ let messageErreur = ""
     // modal -gallery
 let modal = null
 
-const openModal = function(event, works){
+const openModal = function(event, works, categories){
     event.preventDefault()
 
     modal = document.querySelector(event.currentTarget.getAttribute("href"))
@@ -29,8 +30,9 @@ const openModal = function(event, works){
     focusables = Array.from(modalGallery.querySelectorAll(focusableSelector))
     focusables[0].focus()
     
-    modal.addEventListener("click", closeModal)
-    modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", closeModal))
+    modal.addEventListener("click", (e)=> closeModal(e, categories))
+    handleClose = (e) => closeModal(e, categories);
+    modal.querySelectorAll(".js-modal-close").forEach(e=> e.addEventListener("click", handleClose))
     modal.querySelectorAll(".js-modal-stop").forEach(e=>e.addEventListener("click", stopPropagation))
 }
 
@@ -41,13 +43,14 @@ const closeModal = function(event, categories){
     modal.setAttribute("aria-hidden", "true");
             window.setTimeout(function(){
                 modal.style.display = "none";
-                switchModal(categories, modalForm, modalGallery)
+                if (modalGallery=== null){
+                switchModal(categories, modalForm, modalGallery)}
                 modal = null
 
             }, 300)
             modal.removeAttribute("aria-modal");
-            modal.removeEventListener("click", closeModal);
-            modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", closeModal));
+            modal.removeEventListener("click", (e)=> closeModal(e, categories));
+            modal.querySelectorAll(".js-modal-close").forEach(e=>e.removeEventListener("click", handleClose));
             modal.querySelectorAll(".js-modal-stop").forEach(e=>e.removeEventListener("click", stopPropagation))
             resetAddWorkForm()
             suppressionAfficheErreur()
@@ -73,19 +76,13 @@ const focusInModal = (e)=> {
     focusables[index].focus()
 }
 
-window.addEventListener("keydown", function(e){
-    if (e.key === "Escape" || e.key === "Esc" ){
-        closeModal(e)
-    }
-    if (e.key === "Tab" && modal !== null ){
-        focusInModal(e)
-    }
-})
+
 
 
     // modal -form 
 const modalGallery = document.querySelector(".modal-gallery")
 const modalForm = document.querySelector(".modal-form")
+
 const switchModal = function(categories, modalInitale, modalFinale){
     modalInitale.style.display ="none"
     modalFinale.style.display = null
@@ -96,27 +93,29 @@ const switchModal = function(categories, modalInitale, modalFinale){
 }
 
 
-const returnModalToGallery = function(){
-    modalForm.style.display ="none"
-    modalGallery.style.display = null
-    focusables = Array.from(modalGallery.querySelectorAll(focusableSelector))
-}
+
 
 
 
 
 export function initModal(works, categories, ){
-
     document.querySelectorAll(".js-modal").forEach(a=> {
         a.addEventListener("click", (event)=> {
-            openModal(event, works);
-
+            openModal(event, works, categories);
     })
-    
-    document.querySelector(".js-modal-form").addEventListener("click", () => switchModal(categories, modalGallery, modalForm))
-    document.querySelector(".js-modal-retour").addEventListener("click", ()=> switchModal(categories, modalForm, modalGallery))
+    document.querySelector(".js-modal-form").addEventListener("click", () => 
+        switchModal(categories, modalGallery, modalForm))
+    document.querySelector(".js-modal-retour").addEventListener("click", ()=> 
+        switchModal(categories, modalForm, modalGallery))
     })
-    
+    window.addEventListener("keydown", function(e){
+    if (e.key === "Escape" || e.key === "Esc" ){
+        closeModal(e, categories)
+    }
+    if (e.key === "Tab" && modal !== null ){
+        focusInModal(e)
+    }
+})
 }
 
 
@@ -149,44 +148,34 @@ function showWorksModal (works){
         button.appendChild(trash)
         workContainer.appendChild(img);
     })
-
 }
 
 
 // DELETE WORKS 
 const deleteWork = async function(e){
-    // Confirmation 
     if (!confirm("Souhaitez vous supprimer ce travail ?")) return;
-    try {
-
     // get ID
+    try {
     const id = e.target.getAttribute("data-id");
     if (!id) {
         console.error("ID manquant pour la suppression du travail.");
         return;
     }
     const token = localStorage.getItem("token");
-
     // delete ID
     const response = 
         await fetch(`http://localhost:5678/api/works/${id}`, {
                 method:"DELETE",
                 headers: {"accept": "*/*",
-                            "Authorization": `Bearer ${token}`,
-                }
+                            "Authorization": `Bearer ${token}`,}
         })
     if (response.ok) {
-
-        //suppresion dans modale
+        //suppresion dans modale et galerie
         const workContainer = e.target.closest(".workContainer");
     if (workContainer) workContainer.remove();
-        //Suppression dans gallery 
          const galleryImg = document.querySelector(`.gallery img[data-id="${id}"]`);
-        
          if (galleryImg) galleryImg.parentElement.remove()
-            console.log("travail supprimé")
-    }
-    } catch(error) {
+    }} catch(error) {
         console.error("Une erreur est survenue : " + error.message)
     }
 }
@@ -222,7 +211,6 @@ const addWork = async function(e, categories){
         if (!imageFile || !title || !category){
             throw new Error('Certaines données sont manquantes')
         }
-
         // préparation formData
         formData= new FormData() 
         formData.append("image", imageFile);
@@ -235,7 +223,6 @@ const addWork = async function(e, categories){
         afficherErreur()
         return
     }
-
     //envoi serveur
     try {
         const response = await fetch(`http://localhost:5678/api/works`, {
@@ -244,25 +231,17 @@ const addWork = async function(e, categories){
                                 "Authorization": `Bearer ${token}`},
                         body: formData
         })
-    if (!response.ok){
-        messageErreur = "Échec de l'ajout du travail. Veuillez réessayer plus tard."
-        afficherErreur()
-        return
-    }
-        
         const newWork = await response.json()
         console.log("Envoi effectué")
         showNewWorkGallery(newWork)
         showNewWorkModal(newWork)
         resetAddWorkForm()
         switchModal(categories, modalForm, modalGallery)
-        closeModal(e)
-
-    
+        closeModal(e, categories)
     } catch(error){
-
+        messageErreur = "Échec de l'ajout du travail. Veuillez réessayer plus tard."
+        afficherErreur()
         console.error(`Une erreur est survenue : ${error.message}` )
-        
     }
 }
 
@@ -339,11 +318,11 @@ const workPreview = function(){
 
 
 const form = document.querySelector(".form-add-work")
+const inputs = form.querySelectorAll("input, select")
 export function initAddWork() {
     form.addEventListener("submit", addWork)
     
     inputFile.addEventListener("change", workPreview )
-    const inputs = form.querySelectorAll("input, select")
     inputs.forEach(i=> i.addEventListener("change", submitActivate))
 }
 
@@ -361,11 +340,8 @@ function resetAddWorkForm(){
 
 // Messages d'erreur 
 function afficherErreur() {
-
-
     suppressionAfficheErreur()
     // Ajouter une classe à tous les inputs du formulaire
-    const inputs = formulaire.querySelectorAll("input, select")
     const emptyInput = Array.from(inputs).filter(input => !input.value)
     emptyInput.forEach(input => input.classList.add("wrong-form"))
     if (!inputFile.files[0]){

@@ -2,7 +2,6 @@
 // Vérification de connexion  
 const verificationLogin = async(event)=> {
     event.preventDefault()
-
     try {
         const emailPassword = {
         email: event.target.querySelector("[name=email]").value,
@@ -16,7 +15,6 @@ const verificationLogin = async(event)=> {
                 headers: { "Content-Type": "application/json" },
                 body: chargeUtile
             });
-
         // Récupération de données
         const data = await response.json()
         if (!data.token) {
@@ -26,7 +24,6 @@ const verificationLogin = async(event)=> {
             // Redirection 
         localStorage.setItem("token", data.token)
         window.location.href="../index.html"}
-
     }
     catch(error) {
         console.log(`Une erreur est survenue : ${error.message}`)
